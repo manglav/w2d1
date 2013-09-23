@@ -1,15 +1,15 @@
-require 'awesome_print'
 require './board_class.rb'
 require './tile_class.rb'
-
+require 'yaml'
 class Game
   attr_accessor :game_board
   def initialize
+    load_game
     @game_board = Playing_Board.new
   end
 
   def play
-    ap game_board.bomb_indices
+    game_board.print_board
     until game_won?
       puts "Please put the f or r, x, and y"
       inputs = gets.chomp.split(" ")
@@ -17,7 +17,7 @@ class Game
       index = inputs[1..2].map {|e| e.to_i }
       perform_action(action, index)
       game_board.print_board
-    end
+      end
     puts "You won!"
   end
 
@@ -41,8 +41,25 @@ class Game
     when "f"
       game_board[index].flagged ? game_board.total_flags -= 1 : game_board.total_flags += 1
       game_board[index].flagged = !game_board[index].flagged
+    when "save"
+      File.open("most_recent_save.txt", "w") do |f|
+        f.puts self.to_yaml
+      end
     end
   end
+
+  def load_game
+    puts "Do you want to load a game?"
+    input = gets.chomp
+    load_game = nil
+    if input == "yes"
+      puts "Please give the filename"
+      filename = gets.chomp
+      load_game = YAML::load(File.read(filename))
+    end
+    load_game.play if load_game
+  end
+
 end
 
 

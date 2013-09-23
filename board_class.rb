@@ -10,7 +10,7 @@ class Playing_Board
   end
 
   def get_size
-    ap "Please type small or large for the gameboard size"
+    puts "Please type small or large for the gameboard size"
     size = gets.chomp
     if size == "small"
       size = 9
